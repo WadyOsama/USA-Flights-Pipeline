@@ -1,0 +1,173 @@
+version: 2
+sources:
+  - name: analytics
+    database: eighth-edge-289309
+    schema: usa_flights
+    tables:
+      - name: flights
+        description: >
+          The `flights` table contains detailed records of individual flights, including
+          scheduling, performance, and operational information. This data is essential
+          for analyzing flight patterns, punctuality, delays, and other key performance
+          indicators in the aviation industry.
+        columns:
+          - name: unique_row_id
+            description: "A unique identifier for each flight record."
+          - name: FlightDate
+            description: "The date of the flight."
+          - name: Year
+            description: "The year when the flight took place."
+          - name: Month
+            description: "The month when the flight took place."
+          - name: DayofMonth
+            description: "The day of the month when the flight took place."
+          - name: DayOfWeek
+            description: "The day of the week when the flight took place, represented as an integer (1=Monday, 7=Sunday)."
+          - name: DepTime
+            description: "The actual departure time of the flight, in HHMM format."
+          - name: CRSDepTime
+            description: "The scheduled departure time of the flight, in HHMM format."
+          - name: ArrTime
+            description: "The actual arrival time of the flight, in HHMM format."
+          - name: CRSArrTime
+            description: "The scheduled arrival time of the flight, in HHMM format."
+          - name: UniqueCarrier
+            description: "The unique code assigned to the carrier operating the flight."
+          - name: FlightNum
+            description: "The flight number assigned by the carrier."
+          - name: TailNum
+            description: "The tail number (aircraft registration) of the aircraft used."
+          - name: ActualElapsedTime
+            description: "The actual elapsed time of the flight, in minutes."
+          - name: CRSElapsedTime
+            description: "The scheduled elapsed time of the flight, in minutes."
+          - name: AirTime
+            description: "The time spent in the air during the flight, in minutes."
+          - name: ArrDelay
+            description: "The arrival delay of the flight, in minutes."
+          - name: DepDelay
+            description: "The departure delay of the flight, in minutes."
+          - name: Origin
+            description: "The origin airport code."
+          - name: Dest
+            description: "The destination airport code."
+          - name: Distance
+            description: "The distance between the origin and destination airports, in miles."
+          - name: TaxiIn
+            description: "The time spent taxiing in after landing, in minutes."
+          - name: TaxiOut
+            description: "The time spent taxiing out before takeoff, in minutes."
+          - name: Cancelled
+            description: "Indicates if the flight was cancelled (true/false)."
+          - name: CancellationCode
+            description: >
+              The reason for flight cancellation:
+              - 'A' = Carrier
+              - 'B' = Weather
+              - 'C' = National Air System
+              - 'D' = Security
+          - name: Diverted
+            description: "Indicates if the flight was diverted (true/false)."
+          - name: CarrierDelay
+            description: "The delay caused by the carrier, in minutes."
+          - name: WeatherDelay
+            description: "The delay caused by weather conditions, in minutes."
+          - name: NASDelay
+            description: "The delay caused by the National Air System, in minutes."
+          - name: SecurityDelay
+            description: "The delay caused by security issues, in minutes."
+          - name: LateAircraftDelay
+            description: "The delay caused by the late arrival of the aircraft, in minutes."
+
+      - name: planes
+        description: >
+          The `planes` table contains detailed information about individual aircraft. 
+          This includes attributes such as tail number, type, manufacturer, issue date, 
+          model, status, aircraft type, engine type, and the year of manufacture. 
+          This data is essential for analyzing various aspects of aviation operations, 
+          including maintenance schedules, performance metrics, and the impact of 
+          aircraft characteristics on flight delays.
+
+        columns:
+          - name: tailnum
+            description: "The aircraft's tail number, serving as a unique identifier."
+          - name: type
+            description: "The general category or classification of the aircraft."
+          - name: manufacturer
+            description: "The company that produced the aircraft."
+          - name: issue_date
+            description: "The date when the aircraft was officially registered or certified."
+          - name: model
+            description: "The specific model designation of the aircraft."
+          - name: status
+            description: "The current operational status of the aircraft (e.g., active, retired)."
+          - name: aircraft_type
+            description: "A detailed classification indicating the aircraft's general type."
+          - name: engine_type
+            description: "The type of engine(s) installed on the aircraft (e.g., turbofan, piston)."
+          - name: year
+            description: "The year the aircraft was manufactured."
+
+models:
+  - name: carrier_flights_count
+    description: >
+      This model aggregates flight data to compute the monthly number of flights for each carrier. 
+      It joins the aggregated flight counts with carrier information to provide a comprehensive view 
+      of flight operations by carrier and month.
+    columns:
+      - name: Carrier
+        description: "The name of the airline carrier."
+      - name: Year
+        description: "The year during which the flights occurred."
+      - name: Month
+        description: "The month during which the flights occurred."
+      - name: FlightsCount
+        description: "The total number of flights operated by the carrier in the specified month and year."
+
+  - name: plane_manufacturer_flights_count
+    description: >
+      Aggregates flight data to compute the total number of flights per month for each aircraft manufacturer. 
+      This model joins flight records with aircraft information to analyze flight operations based on manufacturer and time period.
+    columns:
+      - name: Manufacturer
+        description: "The name of the aircraft manufacturer."
+      - name: Year
+        description: "The year during which the flights occurred."
+      - name: Month
+        description: "The month during which the flights occurred."
+      - name: FlightsCount
+        description: "The total number of flights operated by aircraft from the specified manufacturer in the given month and year."
+
+  - name: top_10_destination_airports
+    description: >
+      Identifies the top 10 destination airports for each year based on flight counts. 
+      This model ranks airports annually by the number of arriving flights and enriches 
+      the data with airport and city names.
+    columns:
+      - name: Year
+        description: "The year in which the flights arrived."
+      - name: AirportRank
+        description: "The ranking position of the airport based on the number of arriving flights for the given year."
+      - name: Airport
+        description: "The name of the destination airport."
+      - name: City
+        description: "The city where the destination airport is located."
+      - name: FlightsCount
+        description: "The total number of flights arriving at the airport in the specified year."
+
+  - name: top_10_origin_airports
+    description: >
+      Identifies the top 10 origin airports for each year based on flight counts.
+      This model ranks airports annually by the number of departing flights and
+      enriches the data with airport and city names.
+    columns:
+      - name: Year
+        description: "The year in which the flights departed."
+      - name: AirportRank
+        description: "The ranking position of the airport based on the number of departing flights for the given year."
+      - name: Airport
+        description: "The name of the origin airport."
+      - name: City
+        description: "The city where the origin airport is located."
+      - name: FlightsCount
+        description: "The total number of flights departing from the airport in the specified year."

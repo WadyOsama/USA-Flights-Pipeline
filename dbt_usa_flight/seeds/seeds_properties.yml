@@ -1,0 +1,45 @@
+version: 2
+
+seeds: 
+  - name: airports
+    config:
+      column_types:
+        iata: STRING
+        airport: STRING
+        city: STRING
+        state: STRING
+        country: STRING
+        lat: NUMERIC
+        long: NUMERIC
+    description: >
+      A static reference table containing information about airports, including their IATA codes, names, locations, and geographical coordinates.
+      This seed is used to enrich flight data with detailed airport information for analysis and reporting purposes.
+    columns:
+      - name: iata
+        description: "The International Air Transport Association (IATA) code assigned to the airport."
+      - name: airport
+        description: "The official name of the airport."
+      - name: city
+        description: "The city where the airport is located."
+      - name: state
+        description: "The state or province where the airport is situated."
+      - name: country
+        description: "The country where the airport is located."
+      - name: lat
+        description: "The latitude coordinate of the airport's location."
+      - name: long
+        description: "The longitude coordinate of the airport's location."
+        
+  - name: carriers
+    config:
+      column_types:
+        Code: STRING
+        Description: STRING
+    description: >
+      A static reference table containing airline carrier codes and their corresponding descriptions.
+      This seed is used to map carrier codes to their full names in analytical models.
+    columns:
+      - name: Code
+        description: "The unique letters code assigned to the airline carrier."
+      - name: Description
+        description: "The full name or description of the airline carrier."
